@@ -1,0 +1,151 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  rms              RM[]
+  branches         Branch[]
+  teamsMessages    TeamsMessage[]
+  accessInfos      AccessInfo[]
+  dailys           Daily[]
+  importantLinks   ImportantLink[]
+}
+
+model RM {
+  id                 String    @id @default(uuid())
+  ibNumber           String    @unique
+  description        String    @db.Text
+  observations       String?   @db.Text
+  implementationDate DateTime?
+  branchName         String?
+  status             String    @default("pending")
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  userId             String
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([ibNumber])
+}
+
+model Team {
+  id          String       @id @default(uuid())
+  name        String       @unique
+  description String?      @db.Text
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  members     TeamMember[]
+}
+
+model TeamMember {
+  id        String   @id @default(uuid())
+  name      String
+  role      String?
+  teamId    String
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([teamId])
+}
+
+model Branch {
+  id           String    @id @default(uuid())
+  name         String
+  ibNumber     String?
+  purpose      String?   @db.Text
+  createdDate  DateTime  @default(now())
+  status       String    @default("active")
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([ibNumber])
+}
+
+model TeamsMessage {
+  id             String   @id @default(uuid())
+  title          String
+  content        String   @db.Text
+  classification String   @default("normal")
+  date           DateTime @default(now())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([userId])
+  @@index([classification])
+}
+
+model AccessInfo {
+  id          String   @id @default(uuid())
+  name        String
+  description String?  @db.Text
+  key         String?
+  username    String?
+  password    String?
+  url         String?
+  notes       String?  @db.Text
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Daily {
+  id           String          @id @default(uuid())
+  title        String
+  description  String?         @db.Text
+  link         String
+  schedule     String?
+  scrumMaster  String?
+  userId       String
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  participants DailyParticipant[]
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@index([userId])
+}
+
+model DailyParticipant {
+  id        String   @id @default(uuid())
+  name      String
+  dailyId   String
+  daily     Daily    @relation(fields: [dailyId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([dailyId])
+}
+
+model ImportantLink {
+  id          String   @id @default(uuid())
+  title       String
+  url         String
+  description String?  @db.Text
+  category    String?
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([category])
+}
