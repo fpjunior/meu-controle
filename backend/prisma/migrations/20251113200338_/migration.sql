@@ -13,7 +13,7 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "RM" (
     "id" TEXT NOT NULL,
-    "ibNumber" TEXT NOT NULL,
+    "rmNumber" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "observations" TEXT,
     "implementationDate" TIMESTAMP(3),
@@ -53,7 +53,7 @@ CREATE TABLE "TeamMember" (
 CREATE TABLE "Branch" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "ibNumber" TEXT,
+    "rmNumber" TEXT,
     "purpose" TEXT,
     "createdDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "status" TEXT NOT NULL DEFAULT 'active',

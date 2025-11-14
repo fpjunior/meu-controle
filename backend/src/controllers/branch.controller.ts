@@ -4,12 +4,12 @@ import prisma from '../utils/prisma';
 
 export const createBranch = async (req: AuthRequest, res: Response) => {
   try {
-    const { name, ibNumber, purpose, createdDate, status } = req.body;
+    const { name, rmNumber, purpose, createdDate, status } = req.body;
 
     const branch = await prisma.branch.create({
       data: {
         name,
-        ibNumber,
+        rmNumber,
         purpose,
         createdDate: createdDate ? new Date(createdDate) : new Date(),
         status: status || 'active',
@@ -39,14 +39,14 @@ export const getAllBranches = async (req: AuthRequest, res: Response) => {
 export const updateBranch = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const { name, ibNumber, purpose, status } = req.body;
+    const { name, rmNumber, purpose, status } = req.body;
 
-    const branch = await prisma.branch.update({
+    const updatedBranch = await prisma.branch.update({
       where: { id },
-      data: { name, ibNumber, purpose, status },
+      data: { name, rmNumber, purpose, status },
     });
 
-    res.json(branch);
+    res.json(updatedBranch);
   } catch (error) {
     res.status(500).json({ error: 'Erro ao atualizar branch' });
   }

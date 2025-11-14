@@ -25,7 +25,7 @@ model User {
 
 model RM {
   id                 String    @id @default(uuid())
-  ibNumber           String    @unique
+  rmNumber           String    @unique
   description        String    @db.Text
   observations       String?   @db.Text
   implementationDate DateTime?
@@ -37,7 +37,7 @@ model RM {
   user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
-  @@index([ibNumber])
+  @@index([rmNumber])
 }
 
 model Team {
@@ -64,7 +64,7 @@ model TeamMember {
 model Branch {
   id           String    @id @default(uuid())
   name         String
-  ibNumber     String?
+  rmNumber     String?
   purpose      String?   @db.Text
   createdDate  DateTime  @default(now())
   status       String    @default("active")
@@ -74,7 +74,7 @@ model Branch {
   updatedAt    DateTime  @updatedAt
 
   @@index([userId])
-  @@index([ibNumber])
+  @@index([rmNumber])
 }
 
 model TeamsMessage {

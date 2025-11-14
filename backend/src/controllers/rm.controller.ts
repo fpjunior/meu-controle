@@ -4,11 +4,23 @@ import prisma from '../utils/prisma';
 
 export const createRM = async (req: AuthRequest, res: Response) => {
   try {
-    const { ibNumber, description, observations, implementationDate, branchName, status } = req.body;
+    console.log('Dados recebidos:', req.body);
+    console.log('User ID:', req.userId);
+    
+    // Verificar se o usuário existe
+    const user = await prisma.user.findUnique({
+      where: { id: req.userId! }
+    });
+    
+    if (!user) {
+      return res.status(401).json({ error: 'Usuário não encontrado. Faça login novamente.' });
+    }
+    
+    const { rmNumber, description, observations, implementationDate, branchName, status } = req.body;
 
     const rm = await prisma.rM.create({
       data: {
-        ibNumber,
+        rmNumber,
         description,
         observations,
         implementationDate: implementationDate ? new Date(implementationDate) : null,
@@ -20,8 +32,12 @@ export const createRM = async (req: AuthRequest, res: Response) => {
 
     res.status(201).json(rm);
   } catch (error: any) {
+    console.error('Erro ao criar RM:', error);
     if (error.code === 'P2002') {
-      return res.status(400).json({ error: 'IB Number já existe' });
+      return res.status(400).json({ error: 'RM Number já existe' });
+    }
+    if (error.code === 'P2003') {
+      return res.status(401).json({ error: 'Usuário inválido. Faça login novamente.' });
     }
     res.status(500).json({ error: 'Erro ao criar RM' });
   }
@@ -61,7 +77,7 @@ export const getRM = async (req: AuthRequest, res: Response) => {
 export const updateRM = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const { ibNumber, description, observations, implementationDate, branchName, status } = req.body;
+  const { rmNumber, description, observations, implementationDate, branchName, status } = req.body;
 
     const rm = await prisma.rM.findFirst({
       where: { id, userId: req.userId },
@@ -74,7 +90,7 @@ export const updateRM = async (req: AuthRequest, res: Response) => {
     const updatedRM = await prisma.rM.update({
       where: { id },
       data: {
-        ibNumber,
+        rmNumber,
         description,
         observations,
         implementationDate: implementationDate ? new Date(implementationDate) : null,
@@ -86,7 +102,7 @@ export const updateRM = async (req: AuthRequest, res: Response) => {
     res.json(updatedRM);
   } catch (error: any) {
     if (error.code === 'P2002') {
-      return res.status(400).json({ error: 'IB Number já existe' });
+      return res.status(400).json({ error: 'RM Number já existe' });
     }
     res.status(500).json({ error: 'Erro ao atualizar RM' });
   }

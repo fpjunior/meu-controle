@@ -6,12 +6,12 @@ export interface User {
 
 export interface RM {
   id: string;
-  ibNumber: string;
+  rmNumber: string;
   description: string;
   observations?: string;
   implementationDate?: string;
   branchName?: string;
-  status: 'pending' | 'in-progress' | 'completed';
+  status: 'pending' | 'in-progress' | 'implanted' | 'closed';
   createdAt: string;
   updatedAt: string;
 }
@@ -32,7 +32,7 @@ export interface TeamMember {
 export interface Branch {
   id: string;
   name: string;
-  ibNumber?: string;
+  rmNumber?: string;
   purpose?: string;
   createdDate: string;
   status: 'active' | 'merged' | 'deleted';
