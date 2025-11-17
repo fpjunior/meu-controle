@@ -4,6 +4,7 @@ import api from '../services/api';
 import { RM } from '../types';
 
 export default function RMs() {
+  const [search, setSearch] = useState("");
   const [rms, setRms] = useState<RM[]>([]);
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -74,19 +75,28 @@ export default function RMs() {
 
   return (
     <Layout>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Requisições de Mudança (RMs)</h1>
-        <button
-          onClick={() => {
-            setIsCreating(!isCreating);
-            setIsEditing(false);
-            setEditingId(null);
-            setFormData({ rmNumber: '', description: '', observations: '', implementationDate: '', branchName: '', status: 'pending' });
-          }}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          {isCreating ? (isEditing ? 'Cancelar Edição' : 'Cancelar') : 'Nova RM'}
-        </button>
+      <div className="flex flex-col gap-4 mb-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl font-bold">RequisiÃ§Ãµes de MudanÃ§a (RMs)</h1>
+          <button
+            onClick={() => {
+              setIsCreating(!isCreating);
+              setIsEditing(false);
+              setEditingId(null);
+              setFormData({ rmNumber: '', description: '', observations: '', implementationDate: '', branchName: '', status: 'pending' });
+            }}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            {isCreating ? (isEditing ? 'Cancelar EdiÃ§Ã£o' : 'Cancelar') : 'Nova RM'}
+          </button>
+        </div>
+        <input
+          type="text"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Pesquisar por nÃºmero, descriÃ§Ã£o ou branch..."
+          className="border px-3 py-2 rounded w-full max-w-lg"
+        />
       </div>
 
       {isCreating && (
@@ -113,7 +123,7 @@ export default function RMs() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Descrição *</label>
+            <label className="block text-sm font-medium mb-1">Descriï¿½ï¿½o *</label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -123,7 +133,7 @@ export default function RMs() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Observações</label>
+            <label className="block text-sm font-medium mb-1">Observaï¿½ï¿½es</label>
             <textarea
               value={formData.observations}
               onChange={(e) => setFormData({ ...formData, observations: e.target.value })}
@@ -133,7 +143,7 @@ export default function RMs() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Data de Implantação</label>
+              <label className="block text-sm font-medium mb-1">Data de Implantaï¿½ï¿½o</label>
               <input
                 type="date"
                 value={formData.implementationDate}
@@ -156,13 +166,22 @@ export default function RMs() {
             </div>
           </div>
           <button type="submit" className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
-            {isEditing ? 'Salvar Alterações' : 'Criar RM'}
+            {isEditing ? 'Salvar Alteraï¿½ï¿½es' : 'Criar RM'}
           </button>
         </form>
       )}
 
       <div className="space-y-4">
-        {rms.map((rm) => (
+        {rms
+          .filter(rm => {
+            const s = search.toLowerCase();
+            return (
+              rm.rmNumber.toLowerCase().includes(s) ||
+              (rm.description && rm.description.toLowerCase().includes(s)) ||
+              (rm.branchName && rm.branchName.toLowerCase().includes(s))
+            );
+          })
+          .map((rm) => (
           <div key={rm.id} className="border rounded-lg p-4 bg-white shadow-sm">
             <div className="flex justify-between items-start">
               <div className="flex-1">
@@ -182,7 +201,7 @@ export default function RMs() {
                 {rm.observations && <p className="text-sm text-gray-600 mb-2">Obs: {rm.observations}</p>}
                 {rm.implementationDate && (
                   <p className="text-sm text-gray-500">
-                    Implantação: {(() => {
+                    Implantaï¿½ï¿½o: {(() => {
                       const date = new Date(rm.implementationDate);
                       date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
                       return date.toLocaleDateString('pt-BR');
