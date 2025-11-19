@@ -44,7 +44,7 @@ model RM {
 enum Status {
   pending
   preparado
-  in-progress
+  inProgress
   implanted
   closed
 }
@@ -55,15 +55,18 @@ model Team {
   description String?      @db.Text
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
-  members     TeamMember[]
+  members     TeamMember[] @relation("TeamMembers")
+  leaderId    String?
+  leader      TeamMember?  @relation("TeamLeader", fields: [leaderId], references: [id])
 }
 
 model TeamMember {
   id        String   @id @default(uuid())
   name      String
   role      String?
-  teamId    String
-  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId    String?
+  team      Team?    @relation("TeamMembers", fields: [teamId], references: [id], onDelete: Cascade)
+  leadingTeams Team[] @relation("TeamLeader")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

@@ -6,6 +6,7 @@ import rmRoutes from './routes/rm.routes';
 import teamRoutes from './routes/team.routes';
 import branchRoutes from './routes/branch.routes';
 import teamsMessageRoutes from './routes/teamsMessage.routes';
+import teamMemberRoutes from './routes/teamMember.routes';
 import accessInfoRoutes from './routes/accessInfo.routes';
 import dailyRoutes from './routes/daily.routes';
 import importantLinkRoutes from './routes/importantLink.routes';
@@ -31,6 +32,7 @@ app.use('/api/teams-messages', teamsMessageRoutes);
 app.use('/api/access-info', accessInfoRoutes);
 app.use('/api/dailys', dailyRoutes);
 app.use('/api/important-links', importantLinkRoutes);
+app.use('/api/team-member', teamMemberRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
