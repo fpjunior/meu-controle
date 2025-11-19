@@ -7,17 +7,19 @@ export const createRM = async (req: AuthRequest, res: Response) => {
     console.log('Dados recebidos:', req.body);
     console.log('User ID:', req.userId);
     
-    // Verificar se o usuário existe
+    // Verificar se o usuï¿½rio existe
     const user = await prisma.user.findUnique({
       where: { id: req.userId! }
     });
     
     if (!user) {
-      return res.status(401).json({ error: 'Usuário não encontrado. Faça login novamente.' });
+      return res.status(401).json({ error: 'Usuï¿½rio nï¿½o encontrado. Faï¿½a login novamente.' });
     }
     
-    const { rmNumber, description, observations, implementationDate, branchName, status } = req.body;
+    const { rmNumber, description, observations, implementationDate, branchName, status, type, createdAt } = req.body;
 
+    const allowedStatus = ['pending', 'preparado', 'in-progress', 'implanted', 'closed'];
+    const statusValue = allowedStatus.includes(status) ? status : 'pending';
     const rm = await prisma.rM.create({
       data: {
         rmNumber,
@@ -25,7 +27,9 @@ export const createRM = async (req: AuthRequest, res: Response) => {
         observations,
         implementationDate: implementationDate ? new Date(implementationDate) : null,
         branchName,
-        status: status || 'pending',
+        status: statusValue,
+        type: type || 'RM',
+        createdAt: createdAt ? new Date(createdAt) : new Date(),
         userId: req.userId!,
       },
     });
@@ -34,10 +38,10 @@ export const createRM = async (req: AuthRequest, res: Response) => {
   } catch (error: any) {
     console.error('Erro ao criar RM:', error);
     if (error.code === 'P2002') {
-      return res.status(400).json({ error: 'RM Number já existe' });
+      return res.status(400).json({ error: 'RM Number jï¿½ existe' });
     }
     if (error.code === 'P2003') {
-      return res.status(401).json({ error: 'Usuário inválido. Faça login novamente.' });
+      return res.status(401).json({ error: 'Usuï¿½rio invï¿½lido. Faï¿½a login novamente.' });
     }
     res.status(500).json({ error: 'Erro ao criar RM' });
   }
@@ -65,7 +69,7 @@ export const getRM = async (req: AuthRequest, res: Response) => {
     });
 
     if (!rm) {
-      return res.status(404).json({ error: 'RM não encontrada' });
+      return res.status(404).json({ error: 'RM nï¿½o encontrada' });
     }
 
     res.json(rm);
@@ -77,16 +81,18 @@ export const getRM = async (req: AuthRequest, res: Response) => {
 export const updateRM = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-  const { rmNumber, description, observations, implementationDate, branchName, status } = req.body;
+  const { rmNumber, description, observations, implementationDate, branchName, status, type, createdAt } = req.body;
 
     const rm = await prisma.rM.findFirst({
       where: { id, userId: req.userId },
     });
 
     if (!rm) {
-      return res.status(404).json({ error: 'RM não encontrada' });
+      return res.status(404).json({ error: 'RM nï¿½o encontrada' });
     }
 
+    const allowedStatus = ['pending', 'preparado', 'in-progress', 'implanted', 'closed'];
+    const statusValue = allowedStatus.includes(status) ? status : rm.status;
     const updatedRM = await prisma.rM.update({
       where: { id },
       data: {
@@ -95,14 +101,16 @@ export const updateRM = async (req: AuthRequest, res: Response) => {
         observations,
         implementationDate: implementationDate ? new Date(implementationDate) : null,
         branchName,
-        status,
+        status: statusValue,
+        type: type || 'RM',
+        createdAt: createdAt ? new Date(createdAt) : rm.createdAt,
       },
     });
 
     res.json(updatedRM);
   } catch (error: any) {
     if (error.code === 'P2002') {
-      return res.status(400).json({ error: 'RM Number já existe' });
+      return res.status(400).json({ error: 'RM Number jï¿½ existe' });
     }
     res.status(500).json({ error: 'Erro ao atualizar RM' });
   }
@@ -117,7 +125,7 @@ export const deleteRM = async (req: AuthRequest, res: Response) => {
     });
 
     if (!rm) {
-      return res.status(404).json({ error: 'RM não encontrada' });
+      return res.status(404).json({ error: 'RM nï¿½o encontrada' });
     }
 
     await prisma.rM.delete({ where: { id } });

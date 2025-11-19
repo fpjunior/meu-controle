@@ -30,7 +30,8 @@ model RM {
   observations       String?   @db.Text
   implementationDate DateTime?
   branchName         String?
-  status             String    @default("pending")
+  status             Status    @default(pending)
+  type               String    @default("RM")
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
   userId             String
@@ -38,6 +39,14 @@ model RM {
 
   @@index([userId])
   @@index([rmNumber])
+}
+
+enum Status {
+  pending
+  preparado
+  in-progress
+  implanted
+  closed
 }
 
 model Team {

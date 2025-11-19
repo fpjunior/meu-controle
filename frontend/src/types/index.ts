@@ -4,6 +4,7 @@ export interface User {
   name: string;
 }
 
+export type RMType = 'RM' | 'IB';
 export interface RM {
   id: string;
   rmNumber: string;
@@ -11,7 +12,8 @@ export interface RM {
   observations?: string;
   implementationDate?: string;
   branchName?: string;
-  status: 'pending' | 'in-progress' | 'implanted' | 'closed';
+  status: 'pending' | 'in-progress' | 'implanted' | 'closed' | 'preparado';
+  type: RMType;
   createdAt: string;
   updatedAt: string;
 }

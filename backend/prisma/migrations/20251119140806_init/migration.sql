@@ -19,6 +19,7 @@ CREATE TABLE "RM" (
     "implementationDate" TIMESTAMP(3),
     "branchName" TEXT,
     "status" TEXT NOT NULL DEFAULT 'pending',
+    "type" TEXT NOT NULL DEFAULT 'RM',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "userId" TEXT NOT NULL,
@@ -138,13 +139,13 @@ CREATE TABLE "ImportantLink" (
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "RM_ibNumber_key" ON "RM"("ibNumber");
+CREATE UNIQUE INDEX "RM_rmNumber_key" ON "RM"("rmNumber");
 
 -- CreateIndex
 CREATE INDEX "RM_userId_idx" ON "RM"("userId");
 
 -- CreateIndex
-CREATE INDEX "RM_ibNumber_idx" ON "RM"("ibNumber");
+CREATE INDEX "RM_rmNumber_idx" ON "RM"("rmNumber");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Team_name_key" ON "Team"("name");
@@ -156,7 +157,7 @@ CREATE INDEX "TeamMember_teamId_idx" ON "TeamMember"("teamId");
 CREATE INDEX "Branch_userId_idx" ON "Branch"("userId");
 
 -- CreateIndex
-CREATE INDEX "Branch_ibNumber_idx" ON "Branch"("ibNumber");
+CREATE INDEX "Branch_rmNumber_idx" ON "Branch"("rmNumber");
 
 -- CreateIndex
 CREATE INDEX "TeamsMessage_userId_idx" ON "TeamsMessage"("userId");
